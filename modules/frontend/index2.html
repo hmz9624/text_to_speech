@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    Select Voice: <select name="" id="voiceList"></select><br><br>
+    <textarea style="width:500px ;   height:200px" type="text" name="" id="textInput"></textarea>
+    <br><br>
+    <button id="btnSpeak">Speak</button><br><br>
+    <ul>
+        <li id="liste">KONUŞMALAR</li>
+    </ul>
+
+    <script>
+        var voiceList = document.querySelector("#voiceList");
+        var textInput = document.querySelector("#textInput");
+        var btnSpeak = document.querySelector("#btnSpeak");
+        var x = "girdi yok";
+
+        var tts = window.speechSynthesis;
+        console.log(window)
+        var voices = [];
+
+        GetVoices();
+
+        if (speechSynthesis !== undefined) {
+            speechSynthesis.onvoiceschanged = GetVoices;
+        }
+
+        btnSpeak.addEventListener('click', () => {
+            ekle();
+            if (textInput.value == "Merhaba") {
+                console.log("Girdi")
+                var x = textInput.value + " Diye soru sordun.  Cevabım Şu Şekilde . Sanada Merhaba Hamza"
+            } else if (textInput.value == "Saat kaç") {
+                console.log("Girdi")
+                var x = textInput.value + " Diye soru sordun. Cevabım Şu Şekilde Saat tam olarak 2 ";
+            } else if (textInput.value == "Hangi aydayız") {
+                const d = new Date();
+
+                console.log(d.getMonth() + 1)
+                x = textInput.value + " Diye soru sordun. Cevabım Şu Şekilde" + (d.getMonth() + 1) +
+                    " uncu aydayız"
+            } else {
+                x = textInput.value
+            }
+            var toSpeak = new SpeechSynthesisUtterance(x);
+            var selectedVoiceName = voiceList.selectedOptions[0].getAttribute('data-name');
+
+            voices.forEach((voice) => {
+                if (voice.name === selectedVoiceName) {
+                    toSpeak.voice = voice;
+                }
+            });
+            tts.speak(toSpeak);
+            document.getElementById("textInput").value = ""
+        })
+
+        function GetVoices() {
+            voices = tts.getVoices();
+            voiceList.innerHTML = '';
+
+            voices.forEach((voice) => {
+                var listItem = document.createElement('option');
+                listItem.textContent = voice.name;
+                listItem.setAttribute('data-lang', voice.lang);
+                listItem.setAttribute('data-name', voice.name);
+                voiceList.appendChild(listItem);
+
+            });
+
+            voiceList.selectedIndex = 3;
+        }
+
+
+        var input = document.getElementById("textInput");
+
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("btnSpeak").click();
+
+
+
+            }
+        });
+
+        function ekle() {
+            var deger = document.getElementById("textInput").value;
+            var element = document.createElement("li");
+            var text = document.createTextNode(deger);
+            element.appendChild(text);
+
+            var liste = document.getElementById("liste")
+            liste.appendChild(element);
+
+
+
+        }
+    </script>
+
+</body>
+
+</html>
